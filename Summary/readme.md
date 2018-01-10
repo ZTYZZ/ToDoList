@@ -11,7 +11,7 @@ MVC指的是:Model-View-Controller(模型-视图-控制器)，现在我还有点
 首先看一下目前的一些模式。
 #### MVC：(Model-View-Controller)
 ##### MVC
-http://efe.baidu.com/blog/isomorphic/img/mvc.png
+![](http://efe.baidu.com/blog/isomorphic/img/mvc.png)
 MVC的意思就是软件可以分为三个部分：
 视图（View）：用户界面
 控制器（Controller）：业务逻辑
