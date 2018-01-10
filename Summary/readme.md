@@ -1,6 +1,6 @@
 # 学习中的一点总结
 
-## 关于MVVM框架
+## 一、关于MVVM框架
 
 [可伸缩的同构Javascript代码》](http://efe.baidu.com/blog/isomorphic/)下面是自己的总结，后面希望重温一下这篇文章。
 
@@ -47,3 +47,85 @@ MVC的意思就是软件可以分为三个部分：
 
 将MVPPresenter改名为ViewModel，基本与MVP模式一致。
 唯一的区别是MVVM采用的是双向绑定！View的变动，自动反应在ViewModel，反之亦然。可以把ViewModel说成View的Model。
+
+而这个项目就是用MVVM来实现。
+
+## 二、 实现MVVM模式
+
+#### 1. 构建ViewModel：
+
+现在重新审视MVVC模式，他是这样工作的：
+
+1. 用户的交互界面发生改变（View）
+2. 通过ViewModel操作数据（改变Model）
+3. 同时ViewModel也可以挟持这种数据的改变
+4. ViewModel就可以根据数据渲染界面（view）
+![](http://upload-images.jianshu.io/upload_images/271046-8e59f41b85e02cfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 2. 劫持数据的变化
+
+defineProperty():属性发生改变后，用get，set方法进行劫持
+
+1. 对于属性的劫持：
+```
+let val = obj[key];//某一对象的属性
+
+Object.defineProperty(obj,key,{
+	enumerable: true;
+	confirgurable:true;
+	//通过get和set方法劫持
+	get: () => val;//返回属性的数据
+	set: current => {
+		if(current!==val) {
+			callback(current,val);//将新值和老值都传递给监听的回调函数里。
+		}
+		val = current;
+	}
+});
+```
+
+
+## 三、 ES6：箭头函数
+
+ES6 允许使用“箭头”（`=>"`）定义函数.
+正常格式如下；
+```
+var sum = (num1,num2) => {
+	//函数体
+	return num1 + num2;
+};
+```
+等同于ES5下面的函数声明：
+```
+function sum(num1,num2) {
+	//函数声明
+	return num1 + num2;
+}
+```
+也等同于ES5的函数表达式：
+```
+var sum = function(num1,num2) {
+	//函数体
+	return num1 + num2;
+};
+```
+箭头函数可以缩写，规则如下：
+1. 只有一个参数时，()可以省略
+2. 函数体中只有返回语句，则可以省略`{}`和`return`
+```
+var f = v => v;
+```
+等同于：
+```
+function f(v) {
+	return v;
+}
+```
+或者等同于：
+
+```
+var f = (v) => {
+	return v;
+};
+```
+
