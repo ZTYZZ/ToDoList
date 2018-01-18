@@ -83,6 +83,27 @@ Object.defineProperty(obj,key,{
 	}
 });
 ```
+2. 对于方法的劫持
+```
+ObserveArray(arr,callback) {
+	const methods = ["push","pop","unshift","sort","reverse","splice"];
+	const arrayProto = Array.prototype;
+	const delegatePrototype = Object.create(Array.prototype);
+	methods.forEach(method => {
+		Object.defineProperty(delegatePrototype,method,{
+			writable:true;
+			enumerable: true;
+			configurable:true;
+			value(...arg) {
+				let var = [...arr];
+				let current = arrayProto[method].call(this,...arg);
+				callback(current,val,...arg);
+				return current;
+			}
+		});
+	});
+	arr._proto_ = delegatePrototype;
+}
 
 
 ## 三、 ES6：箭头函数
@@ -128,4 +149,41 @@ var f = (v) => {
 	return v;
 };
 ```
+
+## 四、ES6 let和const
+#### 1. JS没有块级作用域
+文章来源：![《点此链接》](http://www.infoq.com/cn/articles/es6-in-depth-let-and-const)
+在ES5中用var来声明一个变量，它的作用域就是函数所在的定义域，而不是块级作用域。
+由此可以引发如下的bug：
+```
+function runTowerExperiment(tower,startTime) {
+	var t = startTime;
+	tower.on("tick",function() {
+		...使用了t的代码
+	});
+	...更多代码...
+}
+```
+到目前为止都很顺利。现在你想添加测量保龄球速度的功能，所以你在回调函数内部添加了一个简单的if语句。
+```
+function runTowerExperiment(tower,startTime) {
+	var t = startTime;
+	tower.on("tick",function() {
+		...使用了变量t的代码...
+		if(bowlingBall.altitude()<=0) {
+			var t = readTachymeter();
+			...
+		}
+	});
+	...更多代码....
+}
+```
+现在你无意中添加了第二个变量t，这里的t指向的是一个新的内部变量t而不是原来的外部变量。
+
+let是更完美的let，在ES6的新代码模式下，你应该停止使用var声明变量，能用let就用let吧。以下是let的新特点：
+1. let声明的变量具有块级作用域。
+2. let声明的全局变量不是全局对象的属性。
+3. let声明的变量直到控制流到达该变量被定义的代码行才会被加载，所以在到达之前使用该变量会触发错误。
+## 五、create方法
+此方法会会使用指定的原型对象及其属性去创建一个新的对象。
 
